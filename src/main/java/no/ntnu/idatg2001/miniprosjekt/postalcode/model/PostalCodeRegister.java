@@ -18,6 +18,7 @@ public class PostalCodeRegister {
 
     private PostalCodeRegister() {
         this.postalCodes = new ArrayList<>();
+        fillRegisterDummies();
     }
 
     /**
@@ -57,5 +58,16 @@ public class PostalCodeRegister {
 
     public List<PostalCode> getPostalCodes() {
         return postalCodes;
+    }
+
+    /**
+     * Temporary method for for filling register with dummies for testing purposes.
+     */
+    private void fillRegisterDummies() {
+        postalCodes.add(new PostalCode("1234", "city1", "municipality1"));
+        postalCodes.add(new PostalCode("2345", "city2", "municipality1"));
+        postalCodes.add(new PostalCode("3456", "city2", "municipality3"));
+        postalCodes.add(new PostalCode("4567", "city4", "municipality4"));
+        postalCodes.add(new PostalCode("4456", "city5", "municipality5"));
     }
 }
