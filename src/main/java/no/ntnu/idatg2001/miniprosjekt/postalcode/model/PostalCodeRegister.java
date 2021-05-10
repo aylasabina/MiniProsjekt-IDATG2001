@@ -1,7 +1,7 @@
 package no.ntnu.idatg2001.miniprosjekt.postalcode.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -58,6 +58,25 @@ public class PostalCodeRegister {
 
     public List<PostalCode> getPostalCodes() {
         return postalCodes;
+    }
+
+    /**
+     * Searches the postal code list with a given search string.
+     * Returns a hashset of the postal codes with a zip code or
+     * city name that starts with the given search string.
+     *
+     * @param searchString the string to search with.
+     * @return a hashset of matches.
+     */
+    public HashSet<PostalCode> searchPostalCodes(String searchString) {
+        HashSet<PostalCode> foundPostalCodesSet = new HashSet<>();
+        for(PostalCode postalCode : postalCodes) {
+            if(postalCode.getZipCode().startsWith(searchString) ||
+            postalCode.getCity().toLowerCase().startsWith(searchString)) {
+                foundPostalCodesSet.add(postalCode);
+            }
+        }
+        return foundPostalCodesSet;
     }
 
     /**
