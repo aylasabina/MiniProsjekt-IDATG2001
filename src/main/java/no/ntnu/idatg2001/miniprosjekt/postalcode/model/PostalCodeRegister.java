@@ -5,8 +5,8 @@ import no.ntnu.idatg2001.miniprosjekt.postalcode.persistence.TSVFileHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class for handling a register of postal codes.
@@ -17,8 +17,8 @@ import java.util.List;
 public class PostalCodeRegister {
     // Instance used for Singleton
     private static PostalCodeRegister postalCodeRegisterInstance;
-    private ArrayList<PostalCode> postalCodes;
     private final Storage storage = new TSVFileHandler("postalcodes.txt");
+    private ArrayList<PostalCode> postalCodes;
 
 
     private PostalCodeRegister() {
@@ -45,7 +45,7 @@ public class PostalCodeRegister {
      * @param postalCode the postal code to be added.
      */
     private void addPostalCode(PostalCode postalCode) {
-        if(postalCode != null) {
+        if (postalCode != null) {
             postalCodes.add(postalCode);
         }
     }
@@ -60,45 +60,62 @@ public class PostalCodeRegister {
         return this.postalCodes;
     }
 
+    /**
+     * Gets the postal codes.
+     * @return the list of postal codes.
+     */
     public List<PostalCode> getPostalCodes() {
         return postalCodes;
     }
 
     /**
-     * Searches the postal code list with a given search string.
-     * Returns a hashset of the postal codes with a zip code or
-     * city name that starts with the given search string.
+     * Method for searching for matching postal codes.
+     * Different search modes have different ways of
+     * finding matches.
      *
-     * @param searchString the string to search with.
-     * @return a hashset of matches.
+     * @param searchEnum the search mode
+     * @param searchString the search string
+     * @return a list of postal codes that match
      */
-    public HashSet<PostalCode> searchPostalCodes(String searchString) {
-        HashSet<PostalCode> foundPostalCodesSet = new HashSet<>();
-        for(PostalCode postalCode : postalCodes) {
-            if(postalCode.getZipCode().startsWith(searchString) ||
-            postalCode.getCity().toLowerCase().startsWith(searchString)) {
-                foundPostalCodesSet.add(postalCode);
-            }
+    public List<PostalCode> search(SearchEnum searchEnum, String searchString) {
+        // find postal codes that start with the given search string, this is default
+        FindingFunction findingFunction = String::startsWith;
+
+        switch (searchEnum) {
+            case END:
+                // find postal codes that end with given search string
+                findingFunction = String::endsWith;
+                break;
+            case CONTAIN:
+                // find postal codes that contain the given search string
+                findingFunction = String::contains;
+                break;
+            case EXACT:
+                // find postal codes that match (ignoring the case) exactly the given search string
+                findingFunction = String::equals;
+                break;
         }
-        return foundPostalCodesSet;
+        return findPostalCodes(searchString, findingFunction);
     }
 
     /**
-     * Searches the postal code list with a given search string.
-     * Returns a hashset of the postal codes with a zip code or
-     * city name that matches the search string.
+     * Find the postal codes that match a given string by a given
+     * function.
      *
-     * @param searchString the string to search with.
-     * @return a hashset of exact matches.
+     * @param searchString the search string
+     * @param findingFunction the function for finding matches
+     * @return a list of postal codes matching by the given function.
      */
-    public HashSet<PostalCode> searchExactPostalCodes(String searchString) {
-        HashSet<PostalCode> foundPostalCodesSet = new HashSet<>();
-        for(PostalCode postalCode : postalCodes) {
-            if(postalCode.getZipCode().equals(searchString) ||
-                    postalCode.getCity().toLowerCase().equals(searchString)) {
-                foundPostalCodesSet.add(postalCode);
-            }
-        }
-        return foundPostalCodesSet;
+    private List<PostalCode> findPostalCodes(String searchString, FindingFunction findingFunction) {
+        return postalCodes.stream()
+                .filter(postalCode ->
+                        findingFunction.find(postalCode.getZipCode(), searchString) ||
+                                findingFunction.find(postalCode.getCity().toUpperCase(), searchString.toUpperCase())
+                ).collect(Collectors.toList());
+    }
+
+    //Functional interface used for storing lambda function in search-method.
+    private interface FindingFunction {
+        boolean find(String string, String searchString);
     }
 }
