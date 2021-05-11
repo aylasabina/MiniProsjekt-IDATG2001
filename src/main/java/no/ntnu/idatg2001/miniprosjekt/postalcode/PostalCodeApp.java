@@ -12,6 +12,14 @@ import java.io.IOException;
  * This is an application for searching postal codes.
  * The information that is stored about a postal code is the
  * the zip code, the city name and the municipality name.
+ * You can search for a zip code or a city name, with different modes.
+ * The current available modes are "starts with", "ends with",
+ * "contains" and "exact".
+ *
+ * Starts with: Gets all zip codes or cities that start with given text
+ * Ends with: Gets all zip codes or cities that end with given text
+ * Contains: Gets all zip codes or cities that contain given text
+ * Exact: Gets zip code or cities that match the given text exactly
  *
  * @author 10042
  * @version 20.05.2021
