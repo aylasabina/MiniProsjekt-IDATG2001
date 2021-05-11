@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCode;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCodeRegister;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -22,7 +23,7 @@ import java.util.ResourceBundle;
  * The class for handling the main window.
  *
  * @author 10042
- * @version 10.05.2021
+ * @version 11.05.2021
  */
 public class MainController implements Initializable {
 
@@ -46,7 +47,12 @@ public class MainController implements Initializable {
         cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
         municipalityColumn.setCellValueFactory(new PropertyValueFactory<>("municipality"));
 
-        tableView.setItems(getPostalCodeListWrapper());
+        try {
+            tableView.setItems(getPostalCodeListWrapper());
+        } catch (IOException e) {
+            System.err.println("An error occured: " + e.getMessage() +
+                    "\nCause: " + e.getCause());
+        }
     }
 
     /**
@@ -54,8 +60,8 @@ public class MainController implements Initializable {
      *
      * @return the observable list of the postal codes.
      */
-    private ObservableList<PostalCode> getPostalCodeListWrapper() {
-        postalCodeObservableList = FXCollections.observableArrayList(postalCodeRegister.getPostalCodes());
+    private ObservableList<PostalCode> getPostalCodeListWrapper() throws IOException {
+        postalCodeObservableList = FXCollections.observableArrayList(postalCodeRegister.getPostalCodesFromFile());
         return postalCodeObservableList;
     }
 
