@@ -5,18 +5,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCode;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCodeRegister;
+import no.ntnu.idatg2001.miniprosjekt.postalcode.model.SearchEnum;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -40,6 +38,8 @@ public class MainController implements Initializable {
     private TableColumn<PostalCode, String> municipalityColumn;
     @FXML
     private TextField searchField;
+    @FXML
+    private ChoiceBox<SearchEnum> searchBox;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -53,6 +53,13 @@ public class MainController implements Initializable {
             System.err.println("An error occured: " + e.getMessage() +
                     "\nCause: " + e.getCause());
         }
+
+        searchBox.getItems().addAll(
+                SearchEnum.START,
+                SearchEnum.END,
+                SearchEnum.CONTAIN,
+                SearchEnum.EXACT);
+        searchBox.getSelectionModel().select(0);
     }
 
     /**
@@ -65,28 +72,64 @@ public class MainController implements Initializable {
         return postalCodeObservableList;
     }
 
+    /**
+     * Updates the observable list when the text in
+     * the input field is changed. If the input field
+     * is blank, all postal codes will be shown.
+     */
     @FXML
-    public void textChanged(KeyEvent keyEvent) {
-        HashSet<PostalCode> results = postalCodeRegister.searchPostalCodes(searchField.getText());
-        postalCodeObservableList.setAll(results);
+    public void textChanged() {
+        if(searchField.getText().isBlank()) {
+            postalCodeObservableList.setAll(postalCodeRegister.getPostalCodes());
+        } else {
+            List<PostalCode> results = postalCodeRegister
+                    .search(searchBox.getSelectionModel().getSelectedItem(),
+                    searchField.getText().trim());
+            postalCodeObservableList.setAll(results);
+        }
     }
 
+    /**
+     * Shows an alert with information about
+     * how to use the search functionality when
+     * the info button is clicked.
+     */
     @FXML
-    public void searchClicked(ActionEvent actionEvent) {
-        HashSet<PostalCode> results = postalCodeRegister.searchExactPostalCodes(searchField.getText());
-        postalCodeObservableList.setAll(results);
-    }
-
-    @FXML
-    public void infoButtonClicked(ActionEvent actionEvent) {
+    public void infoButtonClicked() {
         Alert info = new Alert(Alert.AlertType.INFORMATION);
+        info.setWidth(500);
         info.setHeaderText("Information");
         info.setContentText("You can search for a postal code by:\n" +
                 "\t1. The zip code (format 0000)\n" +
                 "\t2. The city name\n" +
                 "\nThe table will update as you are searching.\n" +
-                "\nClick the search button if you want to search for exact city name instead of" +
-                " every city that starts with given name.");
+                "\nThere are 4 search modes:\n" +
+                "\t1. Starts with: Gets all zip codes or cities that start with given text\n" +
+                "\t2. Ends with: Gets all zip codes or cities that end with given text\n" +
+                "\t3. Contains: Gets all zip codes or cities that contain given text\n" +
+                "\t4. Exact: Gets zip code or cities that match the given text exactly");
         info.showAndWait();
+    }
+
+    /**
+     * Changes the search mode to selected item.
+     */
+    public void searchBoxClicked() {
+        String searchString = searchField.getText().trim();
+        List<PostalCode> results;
+        switch(searchBox.getSelectionModel().getSelectedItem()) {
+            case END:
+                results = postalCodeRegister.search(SearchEnum.END, searchString);
+                break;
+            case CONTAIN:
+                results = postalCodeRegister.search(SearchEnum.CONTAIN, searchString);
+                break;
+            case EXACT:
+                results = postalCodeRegister.search(SearchEnum.EXACT, searchString);
+                break;
+            default:
+                results = postalCodeRegister.search(SearchEnum.START, searchString);
+        }
+        postalCodeObservableList.setAll(results);
     }
 }
