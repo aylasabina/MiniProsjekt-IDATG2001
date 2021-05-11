@@ -1,5 +1,9 @@
 package no.ntnu.idatg2001.miniprosjekt.postalcode.model;
 
+import no.ntnu.idatg2001.miniprosjekt.postalcode.persistence.Storage;
+import no.ntnu.idatg2001.miniprosjekt.postalcode.persistence.TSVFileHandler;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,17 +12,17 @@ import java.util.List;
  * A class for handling a register of postal codes.
  *
  * @author 10042
- * @version 10.05.2021
+ * @version 11.05.2021
  */
 public class PostalCodeRegister {
     // Instance used for Singleton
     private static PostalCodeRegister postalCodeRegisterInstance;
-    private final ArrayList<PostalCode> postalCodes;
+    private ArrayList<PostalCode> postalCodes;
+    private final Storage storage = new TSVFileHandler("postalcodes.txt");
 
 
     private PostalCodeRegister() {
         this.postalCodes = new ArrayList<>();
-        fillRegisterDummies();
     }
 
     /**
@@ -51,9 +55,9 @@ public class PostalCodeRegister {
      *
      * @return the postal codes from file
      */
-    public List<PostalCode> getPostalCodesFromFile() {
-        // temporary
-        return null;
+    public List<PostalCode> getPostalCodesFromFile() throws IOException {
+        this.postalCodes = (ArrayList<PostalCode>) storage.readFromStorage();
+        return this.postalCodes;
     }
 
     public List<PostalCode> getPostalCodes() {
@@ -77,16 +81,5 @@ public class PostalCodeRegister {
             }
         }
         return foundPostalCodesSet;
-    }
-
-    /**
-     * Temporary method for for filling register with dummies for testing purposes.
-     */
-    private void fillRegisterDummies() {
-        postalCodes.add(new PostalCode("1234", "city1", "municipality1"));
-        postalCodes.add(new PostalCode("2345", "city2", "municipality1"));
-        postalCodes.add(new PostalCode("3456", "city2", "municipality3"));
-        postalCodes.add(new PostalCode("4567", "city4", "municipality4"));
-        postalCodes.add(new PostalCode("4456", "city5", "municipality5"));
     }
 }
