@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 /**
  * This is an application for searching postal codes.
  * The information that is stored about a postal code is the
@@ -18,11 +20,17 @@ public class PostalCodeApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(this.getClass().getResource("controller/MainView.fxml"));
-        Scene scene = new Scene(root);
-        stage.setTitle("Patient Register");
-        stage.setScene(scene);
-        stage.show();
+        try {
+            Parent root = FXMLLoader.load(this.getClass().getResource("controller/MainView.fxml"));
+            Scene scene = new Scene(root);
+            stage.setTitle("Patient Register");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ioe) {
+            System.err.println("An IO-exception occured: " + ioe.getMessage() +
+                    "\nCause: " + ioe.getCause());
+            throw ioe;
+        }
     }
 
     /**
