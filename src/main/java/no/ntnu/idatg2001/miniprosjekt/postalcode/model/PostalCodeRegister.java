@@ -82,4 +82,23 @@ public class PostalCodeRegister {
         }
         return foundPostalCodesSet;
     }
+
+    /**
+     * Searches the postal code list with a given search string.
+     * Returns a hashset of the postal codes with a zip code or
+     * city name that matches the search string.
+     *
+     * @param searchString the string to search with.
+     * @return a hashset of exact matches.
+     */
+    public HashSet<PostalCode> searchExactPostalCodes(String searchString) {
+        HashSet<PostalCode> foundPostalCodesSet = new HashSet<>();
+        for(PostalCode postalCode : postalCodes) {
+            if(postalCode.getZipCode().equals(searchString) ||
+                    postalCode.getCity().toLowerCase().equals(searchString)) {
+                foundPostalCodesSet.add(postalCode);
+            }
+        }
+        return foundPostalCodesSet;
+    }
 }

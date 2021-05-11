@@ -72,13 +72,21 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    public void searchClicked(ActionEvent actionEvent) {
+        HashSet<PostalCode> results = postalCodeRegister.searchExactPostalCodes(searchField.getText());
+        postalCodeObservableList.setAll(results);
+    }
+
+    @FXML
     public void infoButtonClicked(ActionEvent actionEvent) {
         Alert info = new Alert(Alert.AlertType.INFORMATION);
         info.setHeaderText("Information");
         info.setContentText("You can search for a postal code by:\n" +
                 "\t1. The zip code (format 0000)\n" +
                 "\t2. The city name\n" +
-                "The table will update as you are searching.");
+                "\nThe table will update as you are searching.\n" +
+                "\nClick the search button if you want to search for exact city name instead of" +
+                " every city that starts with given name.");
         info.showAndWait();
     }
 }
