@@ -5,6 +5,7 @@ import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCode;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -51,6 +52,16 @@ public class TSVFileHandler implements Storage {
                 System.err.println("Postal code was invalid, ignoring that postal code");
             }
         }
+        sortByZipCode(postalCodes);
         return postalCodes;
+    }
+
+    /**
+     * Sort postal codes in ascending order by zip code.
+     *
+     * @param postalCodesToBeSorted the list of postal codes to be sorted
+     */
+    private void sortByZipCode(List<PostalCode> postalCodesToBeSorted) {
+        postalCodesToBeSorted.sort(Comparator.comparing(PostalCode::getZipCode));
     }
 }
