@@ -14,7 +14,8 @@ import java.io.IOException;
  * the zip code, the city name and the municipality name.
  * You can search for a zip code or a city name, with different modes.
  * The current available modes are "starts with", "ends with",
- * "contains" and "exact".
+ * "contains" and "exact". You can only search with numbers or
+ * unicode letters.
  *
  * Starts with: Gets all zip codes or cities that start with given text
  * Ends with: Gets all zip codes or cities that end with given text
@@ -22,7 +23,7 @@ import java.io.IOException;
  * Exact: Gets zip code or cities that match the given text exactly
  *
  * @author 10042
- * @version 20.05.2021
+ * @version 12.05.2021
  */
 public class PostalCodeApp extends Application {
 
