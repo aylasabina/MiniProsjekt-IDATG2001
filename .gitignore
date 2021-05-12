@@ -6,6 +6,3 @@
 # Maven
 log/
 target/
-
-# Storage
-*.txt
