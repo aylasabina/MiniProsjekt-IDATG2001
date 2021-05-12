@@ -74,13 +74,13 @@ public class MainController implements Initializable {
 
     /**
      * Updates the observable list when the text in
-     * the input field is changed. If the input field
-     * is blank, all postal codes will be shown.
+     * the input field is changed or another search mode is chosen.
+     * If the input field is blank, all postal codes will be shown.
      * An alert will be shown if the new text is
      * invalid (contains other than numbers and unicode letters).
      */
     @FXML
-    public void textChanged() {
+    public void updateSearch() {
         if(searchField.getText().isBlank()) {
             postalCodeObservableList.setAll(postalCodeRegister.getPostalCodes());
         } else {
@@ -127,27 +127,5 @@ public class MainController implements Initializable {
                 "\t3. Contains: Gets all zip codes or cities that contain given text\n" +
                 "\t4. Exact: Gets zip code or cities that match the given text exactly");
         info.showAndWait();
-    }
-
-    /**
-     * Changes the search mode to selected item.
-     */
-    public void searchBoxClicked() {
-        String searchString = searchField.getText().trim();
-        List<PostalCode> results;
-        switch(searchBox.getSelectionModel().getSelectedItem()) {
-            case END:
-                results = postalCodeRegister.search(SearchEnum.END, searchString);
-                break;
-            case CONTAIN:
-                results = postalCodeRegister.search(SearchEnum.CONTAIN, searchString);
-                break;
-            case EXACT:
-                results = postalCodeRegister.search(SearchEnum.EXACT, searchString);
-                break;
-            default:
-                results = postalCodeRegister.search(SearchEnum.START, searchString);
-        }
-        postalCodeObservableList.setAll(results);
     }
 }

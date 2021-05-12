@@ -36,7 +36,7 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </Text>
-                  <TextField fx:id="searchField" onKeyTyped="#textChanged" prefHeight="33.0" prefWidth="550.0">
+                  <TextField fx:id="searchField" onKeyTyped="#updateSearch" prefHeight="33.0" prefWidth="550.0">
                      <font>
                         <Font name="Monospaced Regular" size="17.0" />
                      </font>
@@ -44,7 +44,7 @@
                         <Insets right="10.0" />
                      </opaqueInsets>
                   </TextField>
-                  <ChoiceBox fx:id="searchBox" onAction="#searchBoxClicked" prefHeight="24.0" prefWidth="216.0">
+                  <ChoiceBox fx:id="searchBox" onAction="#updateSearch" prefHeight="24.0" prefWidth="216.0">
                      <HBox.margin>
                         <Insets left="10.0" right="10.0" top="5.0" />
                      </HBox.margin></ChoiceBox>
