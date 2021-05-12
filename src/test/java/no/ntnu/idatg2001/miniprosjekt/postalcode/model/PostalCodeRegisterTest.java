@@ -217,4 +217,78 @@ class PostalCodeRegisterTest {
             assertTrue(postalCodesExactBlank.isEmpty());
         }
     }
+
+    /**
+     * Nested class for negative testing of the search method.
+     */
+    @Nested
+    class SearchPostalCodesNegativeTest {
+
+        /**
+         * Test search with invalid characters, i.e characters
+         * that are not numbers nor unicode letters.
+         * This should return null for all search enums.
+         */
+        @Test
+        @DisplayName("Test search with invalid characters")
+        void searchInvalidCharacters() {
+            // Some of the most significant invalid characters.
+            List<String> invalidCharacters = Arrays
+                    .asList("!", "?", ".", ",", "-",
+                            ":", ";", "+", "/", "|",
+                            "@", "#", "%", "&", "=",
+                            "*", "\"", "\\", "^", "$",
+                            ">", "<", "_", "~", "¨");
+
+            // searching with every search mode enum
+            for (SearchEnum searchEnum : SearchEnum.values()) {
+                // searching with every invalid character in the list
+                for (String invalidCharacter : invalidCharacters) {
+                    // Every search should return null
+                    if(postalCodeRegister.search(searchEnum, invalidCharacter) == null) {
+                        assert(true);
+                    } else {
+                        fail("Failed on search mode " +
+                                searchEnum.getMode() +
+                                ", and character "
+                                + invalidCharacter);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Test searching with invalid characters mixed with numbers.
+         * This should still return null for all search enums.
+         */
+        @Test
+        @DisplayName("Test search with invalid characters mixed with numbers")
+        void searchNumbersAndInvalidCharacters() {
+            // testing with invalid character both on beginning, in middle and end.
+            List<String> searchStrings = Arrays.asList("12!", "!12", "1!2");
+
+            for(String searchString : searchStrings) {
+                for(SearchEnum searchEnum : SearchEnum.values()) {
+                    assertNull(postalCodeRegister.search(searchEnum, searchString));
+                }
+            }
+        }
+
+        /**
+         * Test searching with invalid characters mixed with unicode letters.
+         * This should still return null for all search enums.
+         */
+        @Test
+        @DisplayName("Test search with invalid characters mixed with unicode letters")
+        void searchLettersAndInvalidCharacters() {
+            // testing with invalid character both on beginning, in middle and end.
+            List<String> searchStrings = Arrays.asList("ab!", "!ab", "a!b");
+
+            for(String searchString : searchStrings) {
+                for(SearchEnum searchEnum : SearchEnum.values()) {
+                    assertNull(postalCodeRegister.search(searchEnum, searchString));
+                }
+            }
+        }
+    }
 }
