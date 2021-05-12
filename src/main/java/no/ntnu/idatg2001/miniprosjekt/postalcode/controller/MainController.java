@@ -2,12 +2,10 @@ package no.ntnu.idatg2001.miniprosjekt.postalcode.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCode;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCodeRegister;
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.SearchEnum;
@@ -21,7 +19,7 @@ import java.util.ResourceBundle;
  * The class for handling the main window.
  *
  * @author 10042
- * @version 11.05.2021
+ * @version 12.05.2021
  */
 public class MainController implements Initializable {
 
@@ -54,6 +52,7 @@ public class MainController implements Initializable {
                     "\nCause: " + e.getCause());
         }
 
+        // set items of search box and select the first one.
         searchBox.getItems().addAll(
                 SearchEnum.START,
                 SearchEnum.END,
@@ -63,7 +62,8 @@ public class MainController implements Initializable {
     }
 
     /**
-     * Get the list of postal codes wrapped in an observable list.
+     * Get the list of postal codes from file
+     * wrapped in an observable list.
      *
      * @return the observable list of the postal codes.
      */
@@ -76,17 +76,35 @@ public class MainController implements Initializable {
      * Updates the observable list when the text in
      * the input field is changed. If the input field
      * is blank, all postal codes will be shown.
+     * An alert will be shown if the new text is
+     * invalid (contains other than numbers and unicode letters).
      */
     @FXML
     public void textChanged() {
         if(searchField.getText().isBlank()) {
             postalCodeObservableList.setAll(postalCodeRegister.getPostalCodes());
         } else {
+            // Update table with search results in chosen search mode.
             List<PostalCode> results = postalCodeRegister
                     .search(searchBox.getSelectionModel().getSelectedItem(),
                     searchField.getText().trim());
-            postalCodeObservableList.setAll(results);
+            if(results != null) {
+                postalCodeObservableList.setAll(results);
+            } else {
+                showInvalidAlert();
+            }
         }
+    }
+
+    /**
+     * Create and show an alert of type warning.
+     * Will say that input is invalid.
+     */
+    private void showInvalidAlert() {
+        Alert invalidInput = new Alert(Alert.AlertType.WARNING);
+        invalidInput.setHeaderText("Invalid input!");
+        invalidInput.setContentText("You can only search for numbers (0-9) or the unicode letters.");
+        invalidInput.showAndWait();
     }
 
     /**
