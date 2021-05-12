@@ -89,6 +89,7 @@ class PostalCodeTest {
          * this should throw IllegalArgumentException.
          */
         @Test
+        @DisplayName("Test the constructor with a blank city name.")
         void constructWithBlankCityTest() {
             assertThrows(IllegalArgumentException.class,
                     () -> new PostalCode("4321", "", "Blomsterland"));
@@ -102,6 +103,7 @@ class PostalCodeTest {
          * this should throw IllegalArgumentException.
          */
         @Test
+        @DisplayName("Test the constructor with a blank municipality name.")
         void constructWithBlankMunicipalityTest() {
             assertThrows(IllegalArgumentException.class,
                     () -> new PostalCode("4321", "Roseby", ""));
@@ -115,7 +117,8 @@ class PostalCodeTest {
          * this should throw IllegalArgumentException.
          */
         @Test
-        void constructWithBlankZipCodeTest() {
+        @DisplayName("Test the constructor with a invalid zip code.")
+        void constructWithInvalidZipCodeTest() {
             // Test with empty string
             assertThrows(IllegalArgumentException.class,
                     () -> new PostalCode("", "Roseby", "Blomsterland"));
