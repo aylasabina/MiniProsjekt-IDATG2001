@@ -2,8 +2,7 @@ package no.ntnu.idatg2001.miniprosjekt.postalcode.persistence;
 
 import no.ntnu.idatg2001.miniprosjekt.postalcode.model.PostalCode;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,10 +36,13 @@ public class TSVFileHandler implements Storage {
      * @throws FileNotFoundException if file with given filename is inaccessible.
      */
     @Override
-    public List<PostalCode> readFromStorage() throws FileNotFoundException {
+    public List<PostalCode> readFromStorage() throws IOException {
+        // create new file if file doesn't exist or existing file is unreadable
+        createFile();
+
         Scanner scanner = new Scanner(new File(fileName));
         List<PostalCode> postalCodes = new ArrayList<>();
-        while(scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             String[] data = scanner.nextLine().split(DELIMITER);
             try {
                 // index 0, index 1 and index 3 of the TSV file are zip code, city and municipality.
@@ -54,6 +56,18 @@ public class TSVFileHandler implements Storage {
         }
         sortByZipCode(postalCodes);
         return postalCodes;
+    }
+
+    /**
+     * Create a file.
+     */
+    private void createFile() throws IOException {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            file.createNewFile();
+            // throw exception to notify at a higher level
+            throw new IOException();
+        }
     }
 
     /**

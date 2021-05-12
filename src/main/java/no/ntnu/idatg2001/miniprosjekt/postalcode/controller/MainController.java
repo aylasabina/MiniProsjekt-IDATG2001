@@ -45,12 +45,7 @@ public class MainController implements Initializable {
         cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
         municipalityColumn.setCellValueFactory(new PropertyValueFactory<>("municipality"));
 
-        try {
-            tableView.setItems(getPostalCodeListWrapper());
-        } catch (IOException e) {
-            System.err.println("An error occured: " + e.getMessage() +
-                    "\nCause: " + e.getCause());
-        }
+        tableView.setItems(getPostalCodeListWrapper());
 
         // set items of search box and select the first one.
         searchBox.getItems().addAll(
@@ -67,8 +62,15 @@ public class MainController implements Initializable {
      *
      * @return the observable list of the postal codes.
      */
-    private ObservableList<PostalCode> getPostalCodeListWrapper() throws IOException {
-        postalCodeObservableList = FXCollections.observableArrayList(postalCodeRegister.getPostalCodesFromFile());
+    private ObservableList<PostalCode> getPostalCodeListWrapper() {
+        while(postalCodeObservableList == null) {
+            try {
+                postalCodeObservableList =
+                        FXCollections.observableArrayList(postalCodeRegister.getPostalCodesFromFile());
+            } catch (IOException ioe) {
+                showErrorAlert();
+            }
+        }
         return postalCodeObservableList;
     }
 
@@ -94,6 +96,16 @@ public class MainController implements Initializable {
                 showInvalidAlert();
             }
         }
+    }
+
+    private void showErrorAlert() {
+        Alert error = new Alert(Alert.AlertType.ERROR);
+        error.setHeaderText("Error");
+        error.setContentText("Could not read the file.\n" +
+                "Creating a new file postalcodes.txt \n" +
+                "Please fill it with postal codes from section 3:\n" +
+                "\nhttps://www.bring.no/tjenester/adressetjenester/postnummer/postnummertabeller-veiledning\n");
+        error.showAndWait();
     }
 
     /**
