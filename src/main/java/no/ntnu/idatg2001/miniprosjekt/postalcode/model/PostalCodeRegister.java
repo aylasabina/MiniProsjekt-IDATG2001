@@ -6,13 +6,14 @@ import no.ntnu.idatg2001.miniprosjekt.postalcode.persistence.TSVFileHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * A class for handling a register of postal codes.
  *
  * @author 10042
- * @version 11.05.2021
+ * @version 12.05.2021
  */
 public class PostalCodeRegister {
     // Instance used for Singleton
@@ -39,18 +40,6 @@ public class PostalCodeRegister {
     }
 
     /**
-     * Add a postal code to the hashmap, if the postal
-     * code is not equal to <code>null</code>.
-     *
-     * @param postalCode the postal code to be added.
-     */
-    private void addPostalCode(PostalCode postalCode) {
-        if (postalCode != null) {
-            postalCodes.add(postalCode);
-        }
-    }
-
-    /**
      * Gets postal codes from file.
      *
      * @return the postal codes from file
@@ -62,6 +51,7 @@ public class PostalCodeRegister {
 
     /**
      * Gets the postal codes.
+     *
      * @return the list of postal codes.
      */
     public List<PostalCode> getPostalCodes() {
@@ -71,13 +61,19 @@ public class PostalCodeRegister {
     /**
      * Method for searching for matching postal codes.
      * Different search modes have different ways of
-     * finding matches.
+     * finding matches. Will return <code>null</code>
+     * if search string contains other than unicode letters
+     * and numbers.
      *
      * @param searchEnum the search mode
      * @param searchString the search string
      * @return a list of postal codes that match
      */
     public List<PostalCode> search(SearchEnum searchEnum, String searchString) {
+        // Check if every elements of search string does not match unicode letters or numbers.
+        if(!Pattern.compile("[0-9\\p{L}]*").matcher(searchString).matches()) {
+            return null;
+        }
         // find postal codes that start with the given search string, this is default
         FindingFunction findingFunction = String::startsWith;
 
