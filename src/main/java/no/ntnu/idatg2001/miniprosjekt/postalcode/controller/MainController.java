@@ -48,11 +48,7 @@ public class MainController implements Initializable {
         tableView.setItems(getPostalCodeListWrapper());
 
         // set items of search box and select the first one.
-        searchBox.getItems().addAll(
-                SearchEnum.START,
-                SearchEnum.END,
-                SearchEnum.CONTAIN,
-                SearchEnum.EXACT);
+        searchBox.getItems().addAll(SearchEnum.values());
         searchBox.getSelectionModel().select(0);
     }
 
